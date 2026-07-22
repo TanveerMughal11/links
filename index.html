@@ -128,59 +128,9 @@
     <section id="welcomeScreen" class="screen active" aria-labelledby="welcomeTitle">
       <h1 id="welcomeTitle">Welcome Dear</h1>
       <p>There is your link. It takes only 2 minutes to complete.</p>
-      <a class="task-link" href="#complete" id="taskLink">Open Your Link</a>
+      <a class="task-link" href="complete.html" id="taskLink">Open Your Link</a>
       <p class="note">Please complete the task, then collect your code.</p>
     </section>
-
-    <section id="completeScreen" class="screen" aria-labelledby="completeTitle">
-      <h1 id="completeTitle">Congratulations</h1>
-      <p>You completed the task. Now copy this unique code.</p>
-      <div class="code-box" id="uniqueCode" aria-label="Unique code"></div>
-      <button id="copyButton" type="button">Copy Code</button>
-      <div class="copy-message" id="copyMessage" role="status" aria-live="polite"></div>
-    </section>
   </main>
-
-  <script>
-    const welcomeScreen = document.getElementById("welcomeScreen");
-    const completeScreen = document.getElementById("completeScreen");
-    const taskLink = document.getElementById("taskLink");
-    const uniqueCode = document.getElementById("uniqueCode");
-    const copyButton = document.getElementById("copyButton");
-    const copyMessage = document.getElementById("copyMessage");
-
-    function makeCode() {
-      const savedCode = localStorage.getItem("uniqueTaskCode");
-      if (savedCode) return savedCode;
-
-      const code = "TASK-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-      localStorage.setItem("uniqueTaskCode", code);
-      return code;
-    }
-
-    function showCompleteScreen() {
-      uniqueCode.textContent = makeCode();
-      welcomeScreen.classList.remove("active");
-      completeScreen.classList.add("active");
-    }
-
-    taskLink.addEventListener("click", function (event) {
-      event.preventDefault();
-      showCompleteScreen();
-    });
-
-    copyButton.addEventListener("click", async function () {
-      try {
-        await navigator.clipboard.writeText(uniqueCode.textContent);
-        copyMessage.textContent = "Code copied.";
-      } catch {
-        copyMessage.textContent = "Select the code and copy it manually.";
-      }
-    });
-
-    if (window.location.hash === "#complete") {
-      showCompleteScreen();
-    }
-  </script>
 </body>
 </html>
