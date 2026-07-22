@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Link</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #17202a;
+      background:
+        radial-gradient(circle at top left, rgba(255, 205, 112, 0.35), transparent 32%),
+        linear-gradient(135deg, #eef7f4 0%, #f8f2e8 52%, #edf1ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(100%, 430px);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(23, 32, 42, 0.08);
+      border-radius: 8px;
+      box-shadow: 0 18px 48px rgba(23, 32, 42, 0.14);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
+      line-height: 1.15;
+      color: #12343b;
+    }
+
+    p {
+      margin: 0 auto 18px;
+      max-width: 340px;
+      font-size: 16px;
+      line-height: 1.55;
+      color: #425466;
+    }
+
+    .task-link,
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      border-radius: 6px;
+      background: #0f766e;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .task-link:hover,
+    button:hover {
+      background: #115e59;
+      transform: translateY(-1px);
+    }
+
+    .note {
+      margin-top: 14px;
+      margin-bottom: 0;
+      font-size: 13px;
+      color: #667085;
+    }
+
+    .code-box {
+      margin: 22px 0 14px;
+      padding: 16px;
+      border: 1px dashed #0f766e;
+      border-radius: 8px;
+      background: #f0fdfa;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #134e4a;
+      overflow-wrap: anywhere;
+    }
+
+    .copy-message {
+      min-height: 20px;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    @media (max-width: 420px) {
+      main {
+        padding: 24px 18px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .code-box {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="welcomeScreen" class="screen active" aria-labelledby="welcomeTitle">
+      <h1 id="welcomeTitle">Welcome Dear</h1>
+      <p>There is your link. It takes only 2 minutes to complete.</p>
+      <a class="task-link" href="#complete" id="taskLink">Open Your Link</a>
+      <p class="note">Please complete the task, then collect your code.</p>
+    </section>
+
+    <section id="completeScreen" class="screen" aria-labelledby="completeTitle">
+      <h1 id="completeTitle">Congratulations</h1>
+      <p>You completed the task. Now copy this unique code.</p>
+      <div class="code-box" id="uniqueCode" aria-label="Unique code"></div>
+      <button id="copyButton" type="button">Copy Code</button>
+      <div class="copy-message" id="copyMessage" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script>
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const completeScreen = document.getElementById("completeScreen");
+    const taskLink = document.getElementById("taskLink");
+    const uniqueCode = document.getElementById("uniqueCode");
+    const copyButton = document.getElementById("copyButton");
+    const copyMessage = document.getElementById("copyMessage");
+
+    function makeCode() {
+      const savedCode = localStorage.getItem("uniqueTaskCode");
+      if (savedCode) return savedCode;
+
+      const code = "TASK-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+      localStorage.setItem("uniqueTaskCode", code);
+      return code;
+    }
+
+    function showCompleteScreen() {
+      uniqueCode.textContent = makeCode();
+      welcomeScreen.classList.remove("active");
+      completeScreen.classList.add("active");
+    }
+
+    taskLink.addEventListener("click", function (event) {
+      event.preventDefault();
+      showCompleteScreen();
+    });
+
+    copyButton.addEventListener("click", async function () {
+      try {
+        await navigator.clipboard.writeText(uniqueCode.textContent);
+        copyMessage.textContent = "Code copied.";
+      } catch {
+        copyMessage.textContent = "Select the code and copy it manually.";
+      }
+    });
+
+    if (window.location.hash === "#complete") {
+      showCompleteScreen();
+    }
+  </script>
+</body>
+</html>
